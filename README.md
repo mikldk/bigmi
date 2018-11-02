@@ -1,0 +1,3 @@
+# bigmi
+
+Big Mutual Information

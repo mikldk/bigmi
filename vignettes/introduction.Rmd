@@ -1,0 +1,34 @@
+---
+title: "Introduction to bigmi: Big Mutual Information"
+output: rmarkdown::html_vignette
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+author: Mikkel Meyer Andersen
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Introduction}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(fig.width = 7, cache = FALSE)
+```
+
+## Introduction
+
+First, the library is loaded:
+```{r, message=FALSE}
+library(bigmi)
+```
+
+
+```{r}
+data(danedb)
+db <- danedb
+db[, "DYS389II"] <- db[, "DYS389II"] - db[, "DYS389I"]
+```
+
+
+```{r}
+MI_categorical_all_pairwise(db)
+```
+
