@@ -24,25 +24,6 @@ test_that("MI_categorical_all", {
   expect_true(isSymmetric(mi_all))
 })
 
-mi_all_ord <- MI_order(mi_all)
-if (FALSE) {
-  head(sort(mi_all[upper.tri(mi_all, diag = FALSE)], decreasing = TRUE), 10)
-  head(mi_all_ord)
-  mi_all[5, 9]
-  mi_all[6, 11]
-  mi_all[6, 10]
-  mi_all[6, 9]
-}
-test_that("MI_order descendingly", {
-  expect_true(nrow(mi_all_ord) == ncol(mi_all)*(ncol(mi_all) - 1L)/2L)
-  
-  for (i in 2L:nrow(mi_all_ord)) {
-    x <- mi_all_ord[i - 1L, ]
-    y <- mi_all_ord[i, ]
-    expect_true(mi_all[x[1L], x[2L]] >= mi_all[y[1L], y[2L]])
-  }
-})
-
 if (FALSE) {
   library(entropy)
   

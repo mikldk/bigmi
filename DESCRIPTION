@@ -12,10 +12,11 @@ Description: Big Mutual Information
 License: GPL (>= 2) | file LICENSE
 Imports:
     Rcpp (>= 0.12.7),
+    RcppProgress (>= 0.4.1),
     igraph (>= 1.0.1),
     Matrix (>= 1.2-10),
     methods
-LinkingTo: Rcpp
+LinkingTo: Rcpp, RcppProgress
 Suggests: knitr, rmarkdown, testthat
 VignetteBuilder: knitr
 SystemRequirements: C++11

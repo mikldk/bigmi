@@ -32,3 +32,47 @@ db[, "DYS389II"] <- db[, "DYS389II"] - db[, "DYS389I"]
 MI_categorical_all_pairwise(db)
 ```
 
+```{r}
+res <- MI_categorical_worker_sparse_all(db, TRUE); head(res$mi); head(res$idx)
+
+entropy::mi.plugin(prop.table(table(db[, 6], danedb[, 11])), unit = "log")
+entropy::mi.plugin(prop.table(table(db[, 11], danedb[, 12])), unit = "log")
+```
+
+
+```{r}
+load("~/Desktop/rpartSqrtdat.RData")
+d <- d1[, -(1:2)]
+colnames(d)
+dim(d)
+
+# res <- MI_categorical_worker_sparse_all(d, TRUE)
+# head(res$mi)
+# head(res$idx)
+
+#dmat <- as.matrix(d)[, 1:100]
+dmat <- as.matrix(d)
+res <- pearson_correlation_sparse_all(dmat, TRUE)
+str(res, 1)
+
+head(res$corr)
+head(res$idx)
+
+cor(dmat[, res$idx[1, 1]], dmat[, res$idx[1, 2]])
+res$corr[1]
+
+for (i in 1:10) {
+  c1 <- cor(dmat[, res$idx[i, 1]], dmat[, res$idx[i, 2]])
+  c2 <- res$corr[i]
+  print(all.equal(c1, c2))
+}
+
+# head(res$mi)
+# head(res$idx)
+```
+
+```{r}
+
+```
+
+

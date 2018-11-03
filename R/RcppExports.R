@@ -9,15 +9,11 @@ MI_categorical_worker_all <- function(d) {
     .Call('_bigmi_MI_categorical_worker_all', PACKAGE = 'bigmi', d)
 }
 
-#' Sort mutual information matrix
-#' 
-#' Sort square matrix with mutual information, e.g. obtained by [MI_categorical_all_pairwise()].
-#' 
-#' @param d Matrix with observations
-#' @return Matrix with two columns with the (row, column) indices
-#' 
-#' @export
-MI_order <- function(d) {
-    .Call('_bigmi_MI_order', PACKAGE = 'bigmi', d)
+MI_categorical_worker_sparse_all <- function(d, progress = TRUE) {
+    .Call('_bigmi_MI_categorical_worker_sparse_all', PACKAGE = 'bigmi', d, progress)
+}
+
+pearson_correlation_sparse_all <- function(d, progress = TRUE) {
+    .Call('_bigmi_pearson_correlation_sparse_all', PACKAGE = 'bigmi', d, progress)
 }
 
