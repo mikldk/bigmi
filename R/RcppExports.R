@@ -13,7 +13,11 @@ MI_categorical_worker_sparse_all <- function(d, progress = TRUE) {
     .Call('_bigmi_MI_categorical_worker_sparse_all', PACKAGE = 'bigmi', d, progress)
 }
 
-pearson_correlation_sparse_all <- function(d, progress = TRUE) {
-    .Call('_bigmi_pearson_correlation_sparse_all', PACKAGE = 'bigmi', d, progress)
+sort_vector_abs <- function(x) {
+    .Call('_bigmi_sort_vector_abs', PACKAGE = 'bigmi', x)
+}
+
+pearson_correlation_absolute_sparse_all <- function(d, progress = TRUE) {
+    .Call('_bigmi_pearson_correlation_absolute_sparse_all', PACKAGE = 'bigmi', d, progress)
 }
 

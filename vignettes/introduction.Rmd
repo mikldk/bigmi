@@ -52,7 +52,7 @@ dim(d)
 
 #dmat <- as.matrix(d)[, 1:100]
 dmat <- as.matrix(d)
-res <- pearson_correlation_sparse_all(dmat, TRUE)
+res <- pearson_correlation_absolute_sparse_all(dmat, TRUE)
 str(res, 1)
 
 head(res$corr)
@@ -67,8 +67,71 @@ for (i in 1:10) {
   print(all.equal(c1, c2))
 }
 
+head(res$corr)
+i <- which(res$corr < 0)[1]
+i
+c1 <- cor(dmat[, res$idx[i, 1]], dmat[, res$idx[i, 2]])
+c2 <- res$corr[i]
+c1
+c2
+print(all.equal(c1, c2))
+
+
 # head(res$mi)
 # head(res$idx)
 ```
+
+```{r}
+load("~/Desktop/rpartSqrtdat.RData")
+d <- d1[, -(1:2)]
+dmat <- as.matrix(d)
+res <- pearson_correlation_absolute_sparse_all(dmat, TRUE)
+
+graph_has_cycle <- function(graph) {
+  if (!methods::is(graph, "igraph")) {
+    stop("graph must be igraph")
+  }
+  
+  n <- length(igraph::V(graph))
+  L <- igraph::laplacian_matrix(graph, sparse = TRUE)
+  rknL <- Matrix::rankMatrix(L, method = "qr.R") # sparse
+  trL <- sum(Matrix::diag(L))
+  
+  if (0.5*trL >= rknL+1) {
+    return(TRUE)
+  }
+  
+  return(FALSE)
+}
+
+g_final <- igraph::make_empty_graph(directed = FALSE) + 
+  igraph::vertices(colnames(dmat))
+
+for (i in seq_len(nrow(res$idx))) {
+  #i <- 1
+  pair <- res$idx[i, ]
+  pair_nm <- colnames(dmat)[pair]
+  
+  g_new <- g_final + igraph::edge(pair_nm[1], pair_nm[2])
+  
+  if (i %% 1000 == 0) {
+    cat("i = ", i, "; |E| = ", length(igraph::E(g_final)), "\n", sep = "")
+  }
+  
+  if (graph_has_cycle(g_new)) {
+    next
+  }
+  
+  g_final <- g_new
+  
+  if (length(igraph::E(g_final)) == (ncol(dmat) - 1L)) {
+    break
+  } 
+}
+
+igraph::write_graph(g_final, "~/Desktop/rpartSqrtdat-minspan.el", format = "edgelist")
+g_final
+```
+
 
 

@@ -256,6 +256,7 @@ Rcpp::List MI_categorical_worker_sparse_all(const Rcpp::IntegerMatrix& d,
   apply_permutation_in_place(indices, permut);
   
   Rcpp::IntegerMatrix idx_mat(N, 2);
+  
   for (size_t i = 0; i < N; ++i) {
     idx_mat(i, 0) = indices[i].first;
     idx_mat(i, 1) = indices[i].second;
@@ -281,10 +282,33 @@ struct Mean {
   }
 };
 
+bool compare_abs_greater(const double& a, const double& b) {
+  //return (std::abs(a) > std::abs(b));
+  if (a < 0 && b < 0) {
+    //return (-a) > (-b);
+    return a < b;
+  } else if (a > 0 && b > 0) {
+    return a > b;
+  } else {
+    return (std::abs(a) > std::abs(b));
+  }
+  
+  //return (a < b);
+  //return (std::abs(a) < std::abs(b));
+}
 
 // [[Rcpp::export]]
-Rcpp::List pearson_correlation_sparse_all(const Rcpp::NumericMatrix& d, 
-                                          const bool progress = true) {
+Rcpp::NumericVector sort_vector_abs(const Rcpp::NumericVector& x) {
+  std::vector<double> y = Rcpp::as< std::vector<double> >(x);
+  std::sort(y.begin(), y.end(), compare_abs_greater);
+  return Rcpp::wrap(y);
+}
+
+// [[Rcpp::export]]
+Rcpp::List pearson_correlation_absolute_sparse_all(
+    const Rcpp::NumericMatrix& d, 
+    const bool progress = true) {
+  
   const int vars = d.ncol();
   
   if (vars <= 1) {
@@ -296,7 +320,8 @@ Rcpp::List pearson_correlation_sparse_all(const Rcpp::NumericMatrix& d,
   double ndbl = (double)n;
   size_t N = p*(p-1)/2;
   
-  std::vector<double> corr(N);
+  std::vector<double> corr;
+  corr.reserve(N);
   std::vector< std::pair<int, int> > indices(N);
   
   Progress prog(p-1, progress);
@@ -363,20 +388,23 @@ Rcpp::List pearson_correlation_sparse_all(const Rcpp::NumericMatrix& d,
         cov = cov + x_centered[k]*y_centered[k]/ndbl;
       }
       
-      const double abs_cor = std::abs(cov)/(sd_x * sd_y);
+      const double cor = cov/(sd_x * sd_y);
       //Rcpp::Rcout << "(" << i << ", " << j << ") = (" << sd_x << ", " << sd_y << ") = " << cov << " = " << abs_cor << std::endl;
       
-      corr[idx] = abs_cor;
+      //corr[idx] = abs_cor;
+      corr.push_back(cor); // at idx
       indices[idx] = std::make_pair<int, int>(i+1, j+1); // R indexing
+      
       ++idx;
     }
   }
 
-  auto permut = sort_permutation(corr, std::greater<double>());
+  //auto permut = sort_permutation(corr, std::greater<double>());
+  auto permut = sort_permutation(corr, compare_abs_greater);
   
   apply_permutation_in_place(corr, permut);
   apply_permutation_in_place(indices, permut);
-  
+
   Rcpp::IntegerMatrix idx_mat(N, 2);
   for (size_t i = 0; i < N; ++i) {
     idx_mat(i, 0) = indices[i].first;
@@ -389,6 +417,5 @@ Rcpp::List pearson_correlation_sparse_all(const Rcpp::NumericMatrix& d,
   ret["idx"] = idx_mat;
   return ret;
 }
-
 
 
