@@ -82,6 +82,8 @@ print(all.equal(c1, c2))
 ```
 
 ```{r}
+library(bigmi)
+
 load("~/Desktop/rpartSqrtdat.RData")
 d <- d1[, -(1:2)]
 dmat <- as.matrix(d)
